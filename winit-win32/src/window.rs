@@ -1496,7 +1496,7 @@ impl InitData<'_> {
         let win = self.window.as_mut().expect("failed window creation");
 
         // making the window transparent
-        if self.attributes.transparent && !self.win_attributes.no_redirection_bitmap {
+        if (self.attributes.transparent||self.attributes.ex_transparent) && !self.win_attributes.no_redirection_bitmap {
             // Empty region for the blur effect, so the window is fully transparent
             let region = unsafe { CreateRectRgn(0, 0, -1, -1) };
 
@@ -1605,6 +1605,7 @@ unsafe fn init(
     window_flags.set(WindowFlags::NO_BACK_BUFFER, win_attributes.no_redirection_bitmap);
     window_flags.set(WindowFlags::MARKER_ACTIVATE, attributes.active);
     window_flags.set(WindowFlags::TRANSPARENT, attributes.transparent);
+    window_flags.set(WindowFlags::WS_EX_LAYERED, attributes.ex_transparent);
     // WindowFlags::VISIBLE and MAXIMIZED are set down below after the window has been configured.
     // Popups are never resizable, matching the Wayland and macOS backends (and avoiding the
     // thick `WS_SIZEBOX` resize frame).

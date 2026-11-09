@@ -33,3 +33,4 @@ fn custom_cursor_send() {
 fn owned_display_handle_send() {
     needs_send::<winit::event_loop::OwnedDisplayHandle>();
 }
+

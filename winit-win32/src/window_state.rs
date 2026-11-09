@@ -127,6 +127,7 @@ bitflags! {
         const CHILD             = 1 << 10;
         const MAXIMIZED         = 1 << 11;
         const POPUP             = 1 << 12;
+        const WS_EX_LAYERED     = 1 << 24;
 
         /// Marker flag for fullscreen. Should always match `WindowState::fullscreen`, but is
         /// included here to make masking easier.

@@ -157,6 +157,7 @@ pub struct WindowAttributes {
     pub maximized: bool,
     pub visible: bool,
     pub transparent: bool,
+    pub ex_transparent: bool,
     pub blur: bool,
     pub decorations: bool,
     pub window_icon: Option<Icon>,
@@ -340,6 +341,19 @@ impl WindowAttributes {
         self
     }
 
+    /// Sets whether the background of the window should be transparent.
+    ///
+    /// If this is `true`, writing colors with alpha values different than
+    /// `1.0` will produce a transparent window. On some platforms this
+    /// is more of a hint for the system and you'd still have the alpha
+    /// buffer. To control it see [`Window::set_transparent`].
+    ///
+    /// The default is `false`.
+    pub fn with_ex_transparent(mut self, ex_transparent: bool) -> Self {
+        self.ex_transparent = ex_transparent;
+        self
+    }
+
     /// Sets whether the background of the window should be blurred by the system.
     ///
     /// The default is `false`.
@@ -355,6 +369,11 @@ impl WindowAttributes {
     #[inline]
     pub fn transparent(&self) -> bool {
         self.transparent
+    }
+
+    #[inline]
+    pub fn ex_transparent(&self) -> bool {
+        self.ex_transparent
     }
 
     /// Sets whether the window should have a border, a title bar, etc.
@@ -548,6 +567,7 @@ impl Clone for WindowAttributes {
             maximized: self.maximized,
             visible: self.visible,
             transparent: self.transparent,
+            ex_transparent: self.ex_transparent,
             blur: self.blur,
             decorations: self.decorations,
             window_icon: self.window_icon.clone(),
@@ -585,6 +605,7 @@ impl Default for WindowAttributes {
             window_level: Default::default(),
             window_icon: Default::default(),
             transparent: Default::default(),
+            ex_transparent: Default::default(),
             fullscreen: Default::default(),
             maximized: Default::default(),
             position: Default::default(),
