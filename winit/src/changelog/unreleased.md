@@ -38,8 +38,15 @@ with it, the migration guide should be added below the entry, like:
 The migration guide could reference other migration examples in the current
 changelog entry.
 
+### Changed
+
+- Bump MSRV from `1.86` to `1.88`.
+
 ## Unreleased
 
 ### Fixed
 
+- Fix `RgbaIcon::new` and `CustomCursorSource::from_rgba` rejecting every valid
+  RGBA buffer.
 - On macOS, fix text selected from the Character Viewer not producing an IME commit.
+- On Wayland, fix text not being copied to some application due to missing some mime types.
