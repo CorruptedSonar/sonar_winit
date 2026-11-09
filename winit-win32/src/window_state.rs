@@ -127,40 +127,40 @@ bitflags! {
         const CHILD             = 1 << 10;
         const MAXIMIZED         = 1 << 11;
         const POPUP             = 1 << 12;
-        const WS_EX_LAYERED     = 1 << 24;
+        const WS_EX_LAYERED     = 1 << 13;
 
         /// Marker flag for fullscreen. Should always match `WindowState::fullscreen`, but is
         /// included here to make masking easier.
-        const MARKER_EXCLUSIVE_FULLSCREEN = 1 << 13;
-        const MARKER_BORDERLESS_FULLSCREEN = 1 << 14;
+        const MARKER_EXCLUSIVE_FULLSCREEN = 1 << 14;
+        const MARKER_BORDERLESS_FULLSCREEN = 1 << 15;
 
         /// The `WM_SIZE` event contains some parameters that can effect the state of `WindowFlags`.
         /// In most cases, it's okay to let those parameters change the state. However, when we're
         /// running the `WindowFlags::apply_diff` function, we *don't* want those parameters to
         /// effect our stored state, because the purpose of `apply_diff` is to update the actual
         /// window's state to match our stored state. This controls whether to accept those changes.
-        const MARKER_RETAIN_STATE_ON_SIZE = 1 << 15;
+        const MARKER_RETAIN_STATE_ON_SIZE = 1 << 16;
 
-        const MARKER_IN_SIZE_MOVE = 1 << 16;
+        const MARKER_IN_SIZE_MOVE = 1 << 17;
 
-        const MINIMIZED = 1 << 17;
+        const MINIMIZED = 1 << 18;
 
-        const IGNORE_CURSOR_EVENT = 1 << 18;
+        const IGNORE_CURSOR_EVENT = 1 << 19;
 
         /// Fully decorated window (incl. caption, border and drop shadow).
-        const MARKER_DECORATIONS = 1 << 19;
+        const MARKER_DECORATIONS = 1 << 20;
         /// Drop shadow for undecorated windows.
-        const MARKER_UNDECORATED_SHADOW = 1 << 20;
+        const MARKER_UNDECORATED_SHADOW = 1 << 21;
 
-        const MARKER_ACTIVATE = 1 << 21;
+        const MARKER_ACTIVATE = 1 << 22;
 
-        const CLIP_CHILDREN = 1 << 22;
+        const CLIP_CHILDREN = 1 << 23;
 
         /// Whether this window is positioned relative to its parent via the anchor/gravity/
         /// positioner system. Independent of `POPUP`, which only selects the OS window style --
         /// a `WindowType::Window` can be `ANCHORED` too. Used to pick the coordinate frame in
         /// `translate_outer_position`/`translate_outer_position_to_parent`.
-        const ANCHORED = 1 << 23;
+        const ANCHORED = 1 << 24;
 
         const EXCLUSIVE_FULLSCREEN_OR_MASK = WindowFlags::ALWAYS_ON_TOP.bits();
     }
