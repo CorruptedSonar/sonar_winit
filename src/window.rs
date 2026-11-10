@@ -112,6 +112,7 @@ pub struct WindowAttributes {
     pub maximized: bool,
     pub visible: bool,
     pub transparent: bool,
+    pub ex_transparent: bool,
     pub blur: bool,
     pub decorations: bool,
     pub window_icon: Option<Icon>,
@@ -144,6 +145,7 @@ impl Default for WindowAttributes {
             fullscreen: None,
             visible: true,
             transparent: false,
+            ex_transparent:false,
             blur: false,
             decorations: true,
             window_level: Default::default(),
@@ -329,6 +331,11 @@ impl WindowAttributes {
         self.transparent = transparent;
         self
     }
+    #[inline]
+    pub fn with_ex_transparent(mut self, ex_transparent: bool) -> Self {
+        self.ex_transparent = ex_transparent;
+        self
+    }
 
     /// Sets whether the background of the window should be blurred by the system.
     ///
@@ -345,6 +352,11 @@ impl WindowAttributes {
     #[inline]
     pub fn transparent(&self) -> bool {
         self.transparent
+    }
+
+    #[inline]
+    pub fn ex_transparent(&self) -> bool {
+        self.ex_transparent
     }
 
     /// Sets whether the window should have a border, a title bar, etc.
@@ -945,6 +957,11 @@ impl Window {
     pub fn set_transparent(&self, transparent: bool) {
         let _span = tracing::debug_span!("winit::Window::set_transparent", transparent).entered();
         self.window.maybe_queue_on_main(move |w| w.set_transparent(transparent))
+    }
+    #[inline]
+    pub fn set_ex_transparent(&self, ex_transparent: bool) {
+        let _span = tracing::debug_span!("winit::Window::set_ex_transparent", ex_transparent).entered();
+        self.window.maybe_queue_on_main(move |w| w.set_ex_transparent(ex_transparent))
     }
 
     /// Change the window blur state.
