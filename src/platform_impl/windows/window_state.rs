@@ -93,7 +93,7 @@ bitflags! {
         const ALWAYS_ON_BOTTOM  = 1 << 7;
         const NO_BACK_BUFFER    = 1 << 8;
         const TRANSPARENT       = 1 << 9;
-        const WS_EX_LAYERED     = 1 << 10;
+        const LAYERED           = 1 << 10;
         const CHILD             = 1 << 11;
         const MAXIMIZED         = 1 << 12;
         const POPUP             = 1 << 13;
@@ -298,8 +298,11 @@ impl WindowFlags {
         if self.contains(WindowFlags::MAXIMIZED) {
             style |= WS_MAXIMIZE;
         }
+        if self.contains(WindowFlags::LAYERED) || self.contains(WindowFlags::IGNORE_CURSOR_EVENT) {
+            style_ex |= WS_EX_LAYERED;
+        }
         if self.contains(WindowFlags::IGNORE_CURSOR_EVENT) {
-            style_ex |= WS_EX_TRANSPARENT | WS_EX_LAYERED;
+            style_ex |= WS_EX_TRANSPARENT;
         }
         if self.contains(WindowFlags::CLIP_CHILDREN) {
             style |= WS_CLIPCHILDREN;
@@ -542,5 +545,33 @@ impl CursorFlags {
         }
 
         Ok(())
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn layered_flag_sets_layered_style_without_cursor_passthrough() {
+        let (_, ex_style) = WindowFlags::LAYERED.to_window_styles();
+
+        assert_ne!(ex_style & WS_EX_LAYERED, 0);
+        assert_eq!(ex_style & WS_EX_TRANSPARENT, 0);
+    }
+
+    #[test]
+    fn cursor_passthrough_keeps_layered_and_transparent_styles() {
+        let (_, ex_style) = WindowFlags::IGNORE_CURSOR_EVENT.to_window_styles();
+
+        assert_ne!(ex_style & WS_EX_LAYERED, 0);
+        assert_ne!(ex_style & WS_EX_TRANSPARENT, 0);
+    }
+
+    #[test]
+    fn disabling_layered_clears_the_style_when_cursor_passthrough_is_off() {
+        let (_, ex_style) = WindowFlags::empty().to_window_styles();
+
+        assert_eq!(ex_style & WS_EX_LAYERED, 0);
     }
 }

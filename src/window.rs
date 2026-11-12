@@ -112,7 +112,7 @@ pub struct WindowAttributes {
     pub maximized: bool,
     pub visible: bool,
     pub transparent: bool,
-    pub ex_transparent: bool,
+    pub layered: bool,
     pub blur: bool,
     pub decorations: bool,
     pub window_icon: Option<Icon>,
@@ -145,7 +145,7 @@ impl Default for WindowAttributes {
             fullscreen: None,
             visible: true,
             transparent: false,
-            ex_transparent:false,
+            layered: false,
             blur: false,
             decorations: true,
             window_level: Default::default(),
@@ -331,9 +331,16 @@ impl WindowAttributes {
         self.transparent = transparent;
         self
     }
+    /// Sets whether the window should use the Windows layered-window style.
+    ///
+    /// This enables `WS_EX_LAYERED` on Windows. It does not configure the
+    /// window's graphics surface or provide per-pixel alpha content by itself.
+    /// The option is ignored on other platforms.
+    ///
+    /// The default is `false`.
     #[inline]
-    pub fn with_ex_transparent(mut self, ex_transparent: bool) -> Self {
-        self.ex_transparent = ex_transparent;
+    pub fn with_layered(mut self, layered: bool) -> Self {
+        self.layered = layered;
         self
     }
 
@@ -354,9 +361,12 @@ impl WindowAttributes {
         self.transparent
     }
 
+    /// Get whether the window will use the Windows layered-window style.
+    ///
+    /// This setting is ignored on platforms other than Windows.
     #[inline]
-    pub fn ex_transparent(&self) -> bool {
-        self.ex_transparent
+    pub fn layered(&self) -> bool {
+        self.layered
     }
 
     /// Sets whether the window should have a border, a title bar, etc.
@@ -958,10 +968,18 @@ impl Window {
         let _span = tracing::debug_span!("winit::Window::set_transparent", transparent).entered();
         self.window.maybe_queue_on_main(move |w| w.set_transparent(transparent))
     }
+    /// Change whether the window uses the Windows layered-window style.
+    ///
+    /// This toggles `WS_EX_LAYERED` on Windows; it does not configure the
+    /// graphics surface or provide per-pixel alpha content by itself. This
+    /// call is a no-op on other platforms.
     #[inline]
-    pub fn set_ex_transparent(&self, ex_transparent: bool) {
-        let _span = tracing::debug_span!("winit::Window::set_ex_transparent", ex_transparent).entered();
-        self.window.maybe_queue_on_main(move |w| w.set_ex_transparent(ex_transparent))
+    pub fn set_layered(&self, layered: bool) {
+        let _span = tracing::debug_span!("winit::Window::set_layered", layered).entered();
+        #[cfg(windows_platform)]
+        self.window.maybe_queue_on_main(move |w| w.set_layered(layered));
+        #[cfg(not(windows_platform))]
+        let _ = layered;
     }
 
     /// Change the window blur state.

@@ -129,13 +129,13 @@ impl Window {
         });
     }
 
-    pub fn set_ex_transparent(&self, ex_transparent: bool) {
+    pub fn set_layered(&self, layered: bool) {
         let window = self.window;
         let window_state = Arc::clone(&self.window_state);
         self.thread_executor.execute_in_thread(move || {
             let _ = &window;
             WindowState::set_window_flags(window_state.lock().unwrap(), window, |f| {
-                f.set(WindowFlags::WS_EX_LAYERED, ex_transparent)
+                f.set(WindowFlags::LAYERED, layered)
             });
         });
     }
@@ -1240,7 +1240,7 @@ impl InitData<'_> {
         let win = self.window.as_mut().expect("failed window creation");
 
         // making the window transparent
-        if (self.attributes.transparent || self.attributes.ex_transparent) &&  !self.attributes.platform_specific.no_redirection_bitmap {
+        if self.attributes.transparent && !self.attributes.platform_specific.no_redirection_bitmap {
             // Empty region for the blur effect, so the window is fully transparent
             let region = unsafe { CreateRectRgn(0, 0, -1, -1) };
 
@@ -1334,7 +1334,7 @@ unsafe fn init(
         .set(WindowFlags::NO_BACK_BUFFER, attributes.platform_specific.no_redirection_bitmap);
     window_flags.set(WindowFlags::MARKER_ACTIVATE, attributes.active);
     window_flags.set(WindowFlags::TRANSPARENT, attributes.transparent);
-    window_flags.set(WindowFlags::WS_EX_LAYERED, attributes.ex_transparent);
+    window_flags.set(WindowFlags::LAYERED, attributes.layered);
     // WindowFlags::VISIBLE and MAXIMIZED are set down below after the window has been configured.
     window_flags.set(WindowFlags::RESIZABLE, attributes.resizable);
     // Will be changed later using `window.set_enabled_buttons` but we need to set a default here
